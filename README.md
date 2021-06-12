@@ -48,6 +48,7 @@ This is a web templating library I wrote in TypeScript. I don't recommend using 
 
 ### Compile:
 `> npx stcp ( optional path to project.json )`
+
 Or in JS ( or TS ):
 ``` JavaScript
 import { compile } from '@tom.boddaert/sitetree';
