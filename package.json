@@ -1,6 +1,6 @@
 {
     "name": "@tom.boddaert/sitetree",
-    "version": "0.0.2",
+    "version": "0.0.7",
     "description": "A site builder in TypeScript",
     "main": "./lib/cjs/index.js",
     "module": "./lib/index.js",

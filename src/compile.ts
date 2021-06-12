@@ -1,23 +1,25 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
-import { parse as pathParse } from 'path';
+import { parse as pathParse, sep as pathSep } from 'path';
 
 import { isValidFilePath, getRegexGroups, regexReplace } from './functions'
 
-export async function compileFileAsync(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }, options?: { root?: string, maxPasses?: number }) {
+export async function compileFileAsync(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }, options?: { root?: string, maxPasses?: number, debug?: boolean }) {
+    if (options?.debug) console.log(`SiteTree compiler: Opening ${inFile}`);
     if (!isValidFilePath(inFile) || !isValidFilePath(outFile)) throw new Error('SiteTree compiler: Invalid file path!');
 
-    let root = options?.root ?? pathParse(inFile).dir + '/';
+    let root = options?.root ?? pathParse(inFile).dir + pathSep;
     let template = (await readFile(inFile)).toString();
+    if (options?.debug) console.log('SiteTree compiler: Opened file');
 
     let passesLeft = options?.maxPasses ?? 3;
+    if (options?.debug) console.log(`SiteTree compiler: Max passes: ${passesLeft}`);
     while (passesLeft) {
-        passesLeft--;
         let modified = false;
 
         let componentPaths = getRegexGroups(/(?:\<\{\s*)(.*?)(?:\s*\}\>)/g, template);
         if (componentPaths.length > 0) {
             componentPaths.forEach(path => { if (!isValidFilePath(root + path)) throw new Error(`SiteTree compiler: Invalid file path in file (${inFile})!`); });
-            let componentPromises = Promise.all(componentPaths.map(path => readFile(root + path).then(data => [ path, data.toString() ] as [string, string | number | undefined])));
+            let componentPromises = Promise.all(componentPaths.map(path => readFile(root + pathSep + path).then(data => [ path, data.toString() ] as [string, string | number | undefined])));
             template = regexReplace(['<{\\s*', '\\s*}>'], template, await componentPromises);
             modified = true;
         }
@@ -28,17 +30,20 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
             modified = true;
         }
 
+        passesLeft--;
         if (!modified) passesLeft = 0;
+        if (options?.debug) console.log(`SiteTree compiler: Modified: ${modified}, Passes left: ${passesLeft}`);
     }
 
     await writeFile(outFile, template).catch(err => {
         if (err.code === 'ENOENT') throw new Error('SiteTree compiler: Out file path invalid!');
         else throw new Error(err);
     });
+    if (options?.debug) console.log(`SiteTree compiler: Written file to ${outFile}`);
 }
 
-export function compileFile(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }) {
-    compileFileAsync(inFile, outFile, consts).catch(console.error);
+export function compileFile(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }, options?: { root?: string, maxPasses?: number, debug?: boolean }) {
+    compileFileAsync(inFile, outFile, consts, options).catch(console.error);
 }
 
 export interface IProject {
@@ -51,19 +56,24 @@ export interface IProject {
     }[]
 }
 
-export async function compileProjectAsync(projectFile: string = './stproject.json') {
+export async function compileProjectAsync(projectFile: string = './stproject.json', options?: { debug?: boolean }) {
+    if (options?.debug) console.log(`SiteTree compiler: Opening project ${projectFile}`);
     const project = require(projectFile) as IProject;
     if (!isValidFilePath(project.root) || !isValidFilePath(project.out)) throw new Error('SiteTree compiler: Invalid root/out path in project file!');
+    if (options?.debug) console.log('SiteTree compiler: Opened project');
 
     await mkdir(project.out).catch(err => { if (err.code !== 'EEXIST') throw new Error(err) });
     
     for (let {file: path, outFile: newPath, consts} of project.pages) {
         let relDir = pathParse(newPath ?? path).dir;
-        await mkdir(project.out + (relDir ? '/' + relDir : ''), { recursive: true }).catch(err => { if (err.code !== 'EEXIST') throw new Error(err) });
-        await compileFileAsync(project.root + '/' + path, project.out + '/' + (newPath ?? path), consts, {root: project.root});
+        await mkdir(project.out + (relDir ? pathSep + relDir : ''), { recursive: true }).catch(err => { if (err.code !== 'EEXIST') throw new Error(err) });
+        await compileFileAsync(project.root + pathSep + path, project.out + pathSep + (newPath ?? path), consts, {root: project.root, debug: options?.debug});
+        if (options?.debug) console.log(`SiteTree compiler: Compiled ${path}`);
     }
+
+    if (options?.debug) console.log(`SiteTree compiler: Project compiled`);
 }
 
-export function compileProject(projectFile?: string) {
-    compileProjectAsync(projectFile).catch(console.error);
+export function compileProject(projectFile?: string, options?: { debug?: boolean }) {
+    compileProjectAsync(projectFile, options).catch(console.error);
 }
