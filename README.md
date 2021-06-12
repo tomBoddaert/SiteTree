@@ -143,7 +143,7 @@ stproject.html
         "pageName": "About",
         "content": "<{ about.html }>"
       }
-    },
+    }
   ]
 }
 ```
