@@ -12,20 +12,23 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
     let passesLeft = options?.maxPasses ?? 3;
     while (passesLeft) {
         passesLeft--;
+        let modified = false;
 
         let componentPaths = getRegexGroups(/(?:\<\{\s*)(.*?)(?:\s*\}\>)/g, template);
         if (componentPaths.length > 0) {
             componentPaths.forEach(path => { if (!isValidFilePath(root + path)) throw new Error(`SiteTree compiler: Invalid file path in file (${inFile})!`); });
             let componentPromises = Promise.all(componentPaths.map(path => readFile(root + path).then(data => [ path, data.toString() ] as [string, string | number | undefined])));
             template = regexReplace(['<{\\s*', '\\s*}>'], template, await componentPromises);
-            passesLeft = 0;
+            modified = true;
         }
 
         let constants = getRegexGroups(/(?:\[\{\s*)(.*?)(?:\s*\}\])/g, template).map(key => [ key, consts[key] ] as [string, string | number | undefined]);
         if (constants.length > 0) {
             template = regexReplace(['\\[{\\s*', '\\s*}\\]'], template, constants);
-            passesLeft = 0;
+            modified = true;
         }
+
+        if (!modified) passesLeft = 0;
     }
 
     await writeFile(outFile, template).catch(err => {
