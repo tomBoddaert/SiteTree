@@ -55,7 +55,8 @@ export async function compileProjectAsync(projectFile: string = './stproject.jso
     await mkdir(project.out).catch(err => { if (err.code !== 'EEXIST') throw new Error(err) });
     
     for (let {path, outPath: newPath, consts} of project.files) {
-        await compileFileAsync(project.root + path, project.out + (newPath ?? path), consts, {root: project.root});
+        await mkdir(project.out + '/' + (newPath ?? path), { recursive: true }).catch(err => { if (err.code !== 'EEXIST') throw new Error(err) });
+        await compileFileAsync(project.root + '/' + path, project.out + '/' + (newPath ?? path), consts, {root: project.root});
     }
 }
 
