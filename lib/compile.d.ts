@@ -10,8 +10,9 @@ export declare function compileFile(inFile: string, outFile: string, consts: {
 export interface IProject {
     root: string;
     out: string;
-    files: {
-        path: string;
+    pages: {
+        file: string;
+        outFile?: string;
         consts: {
             [key: string]: string | number;
         };
