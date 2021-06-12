@@ -43,7 +43,7 @@ export interface IProject {
     out: string,
     files: {
         path: string,
-        newPath?: string,
+        outPath?: string,
         consts: { [key: string]: string | number }
     }[]
 }
@@ -54,7 +54,7 @@ export async function compileProjectAsync(projectFile: string = './stproject.jso
 
     await mkdir(project.out).catch(err => { if (err.code !== 'EEXIST') throw new Error(err) });
     
-    for (let {path, newPath, consts} of project.files) {
+    for (let {path, outPath: newPath, consts} of project.files) {
         await compileFileAsync(project.root + path, project.out + (newPath ?? path), consts, {root: project.root});
     }
 }
