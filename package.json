@@ -1,0 +1,25 @@
+{
+    "name": "@tom.boddaert/sitetree",
+    "version": "0.0.0",
+    "description": "A site builder in TypeScript",
+    "main": "./lib/cjs/index.js",
+    "module": "./lib/index.js",
+    "files": [
+        "lib/"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "tstp": "npx tsc -p tsconfig.json && npx tsc -p tsconfig-cjs.json",
+        "prepublishOnly": "npm run tstp",
+        "npmPub": "npm publish --access public"
+    },
+    "bin": {
+        "stcp": "./bin/compile.js"
+    },
+    "author": "Tom Boddaert",
+    "license": "CC0-1.0",
+    "devDependencies": {
+        "typescript": "^4.3.2",
+        "@types/node": "^15.12.2"
+    }
+}
