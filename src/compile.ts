@@ -1,5 +1,5 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
-import { parse as pathParse, sep as pathSep } from 'path';
+import { parse as pathParse, sep as pathSep, resolve as pathResolve } from 'path';
 
 import { isValidFilePath, getRegexGroups, regexReplace } from './functions'
 
@@ -57,6 +57,7 @@ export interface IProject {
 }
 
 export async function compileProjectAsync(projectFile: string = './stproject.json', options?: { debug?: boolean }) {
+    projectFile = pathResolve(projectFile);
     if (options?.debug) console.log(`SiteTree compiler: Opening project ${projectFile}`);
     const project = require(projectFile) as IProject;
     if (!isValidFilePath(project.root) || !isValidFilePath(project.out)) throw new Error('SiteTree compiler: Invalid root/out path in project file!');
