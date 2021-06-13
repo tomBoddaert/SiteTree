@@ -11,7 +11,7 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
     let template = (await readFile(inFile)).toString();
     if (options?.debug) console.log('SiteTree compiler: Opened file');
 
-    let passesLeft = options?.maxPasses ?? 3;
+    let passesLeft = options?.maxPasses ?? 10;
     if (options?.debug) console.log(`SiteTree compiler: Max passes: ${passesLeft}`);
     while (passesLeft) {
         let modified = false;
