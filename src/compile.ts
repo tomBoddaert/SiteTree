@@ -1,9 +1,11 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { parse as pathParse, sep as pathSep, resolve as pathResolve } from 'path';
 
+import * as prettify from 'html-prettify';
+
 import { isValidFilePath, getRegexGroups, regexReplace } from './functions'
 
-export async function compileFileAsync(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }, options?: { root?: string, maxPasses?: number, debug?: boolean }) {
+export async function compileFileAsync(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }, options?: { root?: string, maxPasses?: number, prettify?: boolean, debug?: boolean }) {
     if (options?.debug) console.log(`SiteTree compiler: Opening ${inFile}`);
     if (!isValidFilePath(inFile) || !isValidFilePath(outFile)) throw new Error('SiteTree compiler: Invalid file path!');
 
@@ -16,11 +18,11 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
     while (passesLeft) {
         let modified = false;
 
-        let componentPaths = getRegexGroups(/(?:\<\{\s*)(.*?)(?:\s*\}\>)/g, template);
+        let componentPaths = getRegexGroups(/(?:\<\{\s*)(.*?)(?:\s*\}\s?\/?\>)/g, template);
         if (componentPaths.length > 0) {
             componentPaths.forEach(path => { if (!isValidFilePath(root + path)) throw new Error(`SiteTree compiler: Invalid file path in file (${inFile})!`); });
             let componentPromises = Promise.all(componentPaths.map(path => readFile(root + pathSep + path).then(data => [ path, data.toString() ] as [string, string | number | undefined])));
-            template = regexReplace(['<{\\s*', '\\s*}>'], template, await componentPromises);
+            template = regexReplace(['<{\\s*', '\\s*}\s?\/?>'], template, await componentPromises);
             modified = true;
         }
 
@@ -34,6 +36,9 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
         if (!modified) passesLeft = 0;
         if (options?.debug) console.log(`SiteTree compiler: Modified: ${modified}, Passes left: ${passesLeft}`);
     }
+
+    if (options?.prettify && options.debug) console.log(`SiteTree compiler: Prettifying HTML`)
+    if (options?.prettify) outFile = prettify(outFile);
 
     await writeFile(outFile, template).catch(err => {
         if (err.code === 'ENOENT') throw new Error('SiteTree compiler: Out file path invalid!');

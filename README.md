@@ -17,7 +17,7 @@ This is a web templating library I wrote in TypeScript. I don't recommend using 
 
 ### In html files:
 ```
-<{ folder/file.html }>  - insert file ( relative path )
+<{ folder/file.html }/> - insert file ( relative path )
 [{ constantKey }]       - the key of a constant
 {{ variable }}          - the key of a variable ( evaluated at runtime )
 ```
@@ -39,7 +39,7 @@ This is a web templating library I wrote in TypeScript. I don't recommend using 
       "file": "file2.html",
       "outFile": "definitelyNotFile2.html",
       "consts": {
-        "file input": "<{ another/file.txt }>"
+        "file input": "<{ another/file.txt }/>"
       }
     }
   ]
@@ -133,7 +133,7 @@ stproject.html
       "outFile": "home.html",
       "consts": {
         "pageName": "Home",
-        "content": "<{ home.html }>"
+        "content": "<{ home.html }/>"
       }
     },
     {
@@ -141,7 +141,7 @@ stproject.html
       "outFile": "about.html",
       "consts": {
         "pageName": "About",
-        "content": "<{ about.html }>"
+        "content": "<{ about.html }/>"
       }
     }
   ]

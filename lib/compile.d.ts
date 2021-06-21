@@ -3,6 +3,7 @@ export declare function compileFileAsync(inFile: string, outFile: string, consts
 }, options?: {
     root?: string;
     maxPasses?: number;
+    prettify?: boolean;
     debug?: boolean;
 }): Promise<void>;
 export declare function compileFile(inFile: string, outFile: string, consts: {
