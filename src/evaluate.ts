@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 
-import * as prettify from 'html-prettify';
+import prettify from 'html-prettify';
 
 import { isValidFilePath, getRegexGroups, regexReplace } from './functions';
 

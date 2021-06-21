@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { parse as pathParse, sep as pathSep, resolve as pathResolve } from 'path';
 
-import * as prettify from 'html-prettify';
+import prettify from 'html-prettify';
 
 import { isValidFilePath, getRegexGroups, regexReplace } from './functions'
 
@@ -38,7 +38,7 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
     }
 
     if (options?.prettify && options.debug) console.log(`SiteTree compiler: Prettifying HTML`)
-    if (options?.prettify) outFile = prettify(outFile);
+    if (options?.prettify) template = prettify(template);
 
     await writeFile(outFile, template).catch(err => {
         if (err.code === 'ENOENT') throw new Error('SiteTree compiler: Out file path invalid!');
