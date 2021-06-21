@@ -11,6 +11,7 @@ export declare function compileFile(inFile: string, outFile: string, consts: {
 }, options?: {
     root?: string;
     maxPasses?: number;
+    prettify?: boolean;
     debug?: boolean;
 }): void;
 export interface IProject {
@@ -25,8 +26,10 @@ export interface IProject {
     }[];
 }
 export declare function compileProjectAsync(projectFile?: string, options?: {
+    prettify?: boolean;
     debug?: boolean;
 }): Promise<void>;
 export declare function compileProject(projectFile?: string, options?: {
+    prettify?: boolean;
     debug?: boolean;
 }): void;

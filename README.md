@@ -1,6 +1,8 @@
 # SiteTree
 
 This is a web templating library I wrote in TypeScript. I don't recommend using it as I just made it for fun, although I am ( will be ) using it for my website.
+https://github.com/tomBoddaert/SiteTree
+https://www.npmjs.com/package/@tom.boddaert/sitetree
 
 ## Installation with NPM
 `npm i @tom.boddaert/sitetree`
@@ -53,8 +55,8 @@ Or in JS ( or TS ):
 ``` JavaScript
 import { compile } from '@tom.boddaert/sitetree';
 
-compile();
-compile('./path/to/project.json');
+compile({ prettify: true });
+compile('./path/to/project.json', { prettify: true });
 ```
 
 ### Evaluate:
@@ -65,7 +67,7 @@ var data = {
   "1 - 100": Math.floor(Math.random() * 101)
 }
 
-evaluate('./path/to/file.html', data, console.log);
+evaluate('./path/to/file.html', data, console.log, { prettify: true });
 ```
 
 ## Advanced
@@ -80,7 +82,7 @@ var data = {
   "1 - 100": Math.floor(Math.random() * 101)
 }
 
-evaluateAsync('./path/to/file.html', data)
+evaluateAsync('./path/to/file.html', data, { prettify: true })
   .then(console.log)
   .catch(console.error);
 ```

@@ -47,7 +47,7 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
     if (options?.debug) console.log(`SiteTree compiler: Written file to ${outFile}`);
 }
 
-export function compileFile(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }, options?: { root?: string, maxPasses?: number, debug?: boolean }) {
+export function compileFile(inFile: string, outFile: string, consts: { [key: string]: string | number | undefined }, options?: { root?: string, maxPasses?: number, prettify?: boolean, debug?: boolean }) {
     compileFileAsync(inFile, outFile, consts, options).catch(console.error);
 }
 
@@ -61,7 +61,7 @@ export interface IProject {
     }[]
 }
 
-export async function compileProjectAsync(projectFile: string = './stproject.json', options?: { debug?: boolean }) {
+export async function compileProjectAsync(projectFile: string = './stproject.json', options?: { prettify?: boolean, debug?: boolean }) {
     projectFile = pathResolve(projectFile);
     if (options?.debug) console.log(`SiteTree compiler: Opening project ${projectFile}`);
     const project = require(projectFile) as IProject;
@@ -73,13 +73,13 @@ export async function compileProjectAsync(projectFile: string = './stproject.jso
     for (let {file: path, outFile: newPath, consts} of project.pages) {
         let relDir = pathParse(newPath ?? path).dir;
         await mkdir(project.out + (relDir ? pathSep + relDir : ''), { recursive: true }).catch(err => { if (err.code !== 'EEXIST') throw new Error(err) });
-        await compileFileAsync(project.root + pathSep + path, project.out + pathSep + (newPath ?? path), consts, {root: project.root, debug: options?.debug});
+        await compileFileAsync(project.root + pathSep + path, project.out + pathSep + (newPath ?? path), consts, {root: project.root, prettify: options?.prettify, debug: options?.debug});
         if (options?.debug) console.log(`SiteTree compiler: Compiled ${path}`);
     }
 
     if (options?.debug) console.log(`SiteTree compiler: Project compiled`);
 }
 
-export function compileProject(projectFile?: string, options?: { debug?: boolean }) {
+export function compileProject(projectFile?: string, options?: { prettify?: boolean, debug?: boolean }) {
     compileProjectAsync(projectFile, options).catch(console.error);
 }
