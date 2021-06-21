@@ -3,6 +3,7 @@
 This is a web templating library I wrote in TypeScript. I don't recommend using it as I just made it for fun, although I am ( will be ) using it for my website.
 
 https://github.com/tomBoddaert/SiteTree
+
 https://www.npmjs.com/package/@tom.boddaert/sitetree
 
 ## Installation with NPM
