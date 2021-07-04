@@ -22,7 +22,7 @@ export async function compileFileAsync(inFile: string, outFile: string, consts: 
         if (componentPaths.length > 0) {
             componentPaths.forEach(path => { if (!isValidFilePath(root + path)) throw new Error(`SiteTree compiler: Invalid file path in file (${inFile})!`); });
             let componentPromises = Promise.all(componentPaths.map(path => readFile(root + pathSep + path).then(data => [ path, data.toString() ] as [string, string | number | undefined])));
-            template = regexReplace(['<{\\s*', '\\s*}\s?\/?>'], template, await componentPromises);
+            template = regexReplace(['<{\\s*', '\\s*}\\s?\/?>'], template, await componentPromises);
             modified = true;
         }
 
