@@ -7,7 +7,7 @@ https://github.com/tomBoddaert/SiteTree
 https://www.npmjs.com/package/@tom.boddaert/sitetree
 
 ## Installation with NPM
-`npm i @tom.boddaert/sitetree`
+`npm i "@tom.boddaert/sitetree"`
 
 ## Use
 
