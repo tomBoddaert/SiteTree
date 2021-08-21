@@ -1,6 +1,6 @@
 # SiteTree
 
-This is a web templating library I wrote in TypeScript. I don't recommend using it as I just made it for fun, although I am ( will be ) using it for my website.
+This is a web templating library I wrote in TypeScript. I don't recommend using it as I just made it for fun, although I am using it for my website.
 
 https://github.com/tomBoddaert/SiteTree
 
